@@ -5,13 +5,15 @@ from flask import Flask, render_template, request, url_for, flash, redirect, abo
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
+# flash() stores messages in the session, which needs a secret key
+app.config["SECRET_KEY"] = "your secret key"
 
 
 # Function to open a connection to the database.db file
 def get_db_connection():
     # create connection to the database
     conn = sqlite3.connect('database.db')
-    
+
     # allows us to have name-based access to columns
     # the database connection will return rows we can access like regular Python dictionaries
     conn.row_factory = sqlite3.Row
@@ -23,11 +25,14 @@ def get_db_connection():
 # use the app.route() decorator to create a Flask view function called index()
 @app.route('/')
 def index():
-    
-    return "<h1>Welcome to My Blog</h1>"
+    return render_template('index.html')
 
 
 # route to create a post
+@app.route('/create/', methods=('GET', 'POST'))
+def create():
+    return render_template('create.html')
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()
